@@ -7,7 +7,9 @@
   </PropertyGroup>
 
 	<ItemGroup>
+    <PackageReference Include="Azure.Identity" Version="1.9.0" />
     <PackageReference Include="BenchmarkDotNet" Version="0.13.6" />
+    <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.35.2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
 		<PackageReference Include="Lambda.Azure.CosmosDb.OData.Sql" Version="4.1.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.1" />

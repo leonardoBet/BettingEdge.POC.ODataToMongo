@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNetCore.OData.Query;
+﻿using BenchmarkDotNet.Attributes;
+using Microsoft.AspNetCore.OData.Query;
 using System.Text;
-using System;
-using BenchmarkDotNet.Attributes;
 
 namespace BettingEdge.POC.ODataToMongo
 {
-	[MemoryDiagnoser(false)]
+	[MemoryDiagnoser(true)]
 	public class ODataQueryBuilder<TModel>
 	{
 		private readonly ODataQueryOptions<TModel> _oDataQueryOptions;
@@ -16,10 +15,11 @@ namespace BettingEdge.POC.ODataToMongo
 		{
 			_oDataQueryOptions = oDataQueryOptions;
 
-			BreakDownQueryOptions(_oDataQueryOptions);
+			BreakDownQueryOptions();
 		}
 
-		private void BreakDownQueryOptions(ODataQueryOptions<TModel> oDataQueryOptions)
+		[Benchmark]
+		public void BreakDownQueryOptions()
 		{
 			const char QUERY_OPTIONS_PREFIX = '?';
 			const char QUERY_OPTIONS_SEPARATOR = '&';
@@ -29,7 +29,7 @@ namespace BettingEdge.POC.ODataToMongo
 			var projectableOptions = new StringBuilder();
 			var nonProjectableOptions = new StringBuilder();
 
-			foreach (var e in oDataQueryOptions.Request.Query)
+			foreach (var e in _oDataQueryOptions.Request.Query)
 			{
 				if (e.Key.StartsWith("$select") || e.Key.StartsWith("$expand"))//TODO: add more projectable options dynamically
 				{
@@ -52,21 +52,21 @@ namespace BettingEdge.POC.ODataToMongo
 		}
 
 		[Benchmark]
-		public ODataQueryOptions GetProjectableQueriesOnly()
+		public ODataQueryOptions<TModel> GetProjectableQueriesOnly()
 		{
-			var req = _oDataQueryOptions.Request;
-			//var newUri = new Uri($"{req.Scheme}://{req.Host}{req.Path}{req.QueryString}");
-			_oDataQueryOptions.Request.QueryString = projectableQuerySet;
-			return (ODataQueryOptions)Activator.CreateInstance(_oDataQueryOptions.GetType(), _oDataQueryOptions.Context, req);
+			var context = _oDataQueryOptions.Context;
+			var request = _oDataQueryOptions.Request;
+			request.QueryString = projectableQuerySet;
+			return (ODataQueryOptions<TModel>)Activator.CreateInstance(_oDataQueryOptions.GetType(), context, request);
 		}
 
 		[Benchmark]
 		public ODataQueryOptions GetNonProjectableQueriesOnly()
 		{
-			var req = _oDataQueryOptions.Request;
-			//var newUri = new Uri($"{req.Scheme}://{req.Host}{req.Path}{req.QueryString}");
-			_oDataQueryOptions.Request.QueryString = nonProjectableQuerySet;
-			return (ODataQueryOptions)Activator.CreateInstance(_oDataQueryOptions.GetType(), _oDataQueryOptions.Context, req);
+			var context = _oDataQueryOptions.Context;
+			var request = _oDataQueryOptions.Request;
+			request.QueryString = nonProjectableQuerySet;
+			return (ODataQueryOptions<TModel>)Activator.CreateInstance(_oDataQueryOptions.GetType(), context, request);
 		}
 	}
 }

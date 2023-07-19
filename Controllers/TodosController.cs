@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
+using Microsoft.Azure.Cosmos;
 using Microsoft.OData.ModelBuilder;
 using Microsoft.OData.UriParser;
 using MongoDB.Driver;
@@ -7,6 +9,10 @@ using MongoDB.Driver.Core.Configuration;
 using MongoDB.Driver.Linq;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Net.Mime;
+using Microsoft.Azure.Cosmos;
+using Azure.Identity;
+using Microsoft.Azure.Documents.OData.Sql;
+using MongoDB.Bson;
 
 namespace BettingEdge.POC.ODataToMongo.Controllers
 {
@@ -15,8 +21,8 @@ namespace BettingEdge.POC.ODataToMongo.Controllers
 	public class TodosController : ControllerBase
 	{
 		private const string ATLAS_URI = "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass%20Community&ssl=false";
-		MongoClient client;
 		IMongoCollection<TodoItem> todoCollection;
+		Container cosmosContainer;
 
 		public TodosController()
     {
@@ -27,12 +33,22 @@ namespace BettingEdge.POC.ODataToMongo.Controllers
 				b.AddSimpleConsole();
 				b.SetMinimumLevel(LogLevel.Debug);
 			}));
-			client = new MongoClient(settings);
-			todoCollection = client.GetDatabase("ODataPOCDatabase").GetCollection<TodoItem>("TodoList");
-    }
+			MongoClient mongoClient = new MongoClient(settings);
+			todoCollection = mongoClient.GetDatabase("ODataPOCDatabase").GetCollection<TodoItem>("TodoList");
+
+			// New instance of CosmosClient class
+			CosmosClient comsClient = new(
+				accountEndpoint: "https://localhost:8081/",
+				"C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=="
+			);
+
+			Database database = comsClient.GetDatabase(id: "ODataPOCDatabase");
+			cosmosContainer = database.GetContainer(id: "TodoList");
+
+		}
 
 		/// <summary>
-		/// This is just a test controller to OData queries against MongoDb.
+		/// This is just a test controller to test OData queries against MongoDb.
 		/// </summary>
 		/// <returns></returns>
 		[EnableQuery]
@@ -54,7 +70,7 @@ namespace BettingEdge.POC.ODataToMongo.Controllers
 		[Consumes(MediaTypeNames.Application.Json)]
 		[SwaggerOperation("GetTodos")]
 		[SwaggerResponse(200, "Todos response", typeof(TodoItem))]
-		public IActionResult Test1(
+		public IActionResult Mongo(
 			[FromQuery(Name = "pageSize")] int? pageSize = null,
 			[FromQuery(Name = "pagePath")] string pagePath = null
 		)
@@ -69,7 +85,7 @@ namespace BettingEdge.POC.ODataToMongo.Controllers
 			if (oDataQueryOptions.IsSupportedQueryOption("select") && !string.IsNullOrEmpty(oDataQueryOptions.RawValues.Select))
 			{
 				var list = new List<TodoItem>();
-				foreach (TodoItem result in partialResult)
+				foreach (TodoItem result in partialResult)//Forcing materialization of the query 
 				{
 					list.Add(result);
 				}
@@ -77,7 +93,45 @@ namespace BettingEdge.POC.ODataToMongo.Controllers
 				partialResult = odataBuilder.GetProjectableQueriesOnly().ApplyTo(list.AsQueryable());
 			}
 
+
 			return Ok(partialResult);
+		}
+
+		/// <summary>
+		/// This controller aims to test the ODataQueryBuilder using same configuration as BettingEdge API.
+		/// </summary>
+		/// <param name="pageSize"></param>
+		/// <param name="pagePath"></param>
+		/// <returns></returns>
+		[HttpGet("[action]")]
+		[Produces(MediaTypeNames.Application.Json)]
+		[Consumes(MediaTypeNames.Application.Json)]
+		[SwaggerOperation("GetTodos")]
+		[SwaggerResponse(200, "Todos response", typeof(TodoItem))]
+		public IActionResult Cosmos(
+			[FromQuery(Name = "pageSize")] int? pageSize = null,
+			[FromQuery(Name = "pagePath")] string pagePath = null
+		)
+		{
+			var context = GetQueryContext<TodoItem>();
+			var oDataQueryOptions = new ODataQueryOptions<TodoItem>(context, HttpContext.Request);
+			var oDataToSqlTranslator = new ODataToSqlTranslator(new SQLQueryFormatter());
+
+			var sqlQuery = oDataToSqlTranslator.Translate(oDataQueryOptions, TranslateOptions.ALL);
+			var feed = cosmosContainer.GetItemQueryIterator<TodoItem>(sqlQuery);
+
+			var list = new List<TodoItem>();
+			while (feed.HasMoreResults)
+			{
+				FeedResponse<TodoItem> response = feed.ReadNextAsync().Result;
+
+				// Iterate query results
+				foreach (TodoItem item in response)
+				{
+					list.Add(item);
+				}
+			}
+			return Ok(list);
 		}
 
 		/// <summary>

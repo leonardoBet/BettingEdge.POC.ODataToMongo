@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using Newtonsoft.Json;
 
 namespace BettingEdge.POC.ODataToMongo
 {
@@ -9,12 +10,12 @@ namespace BettingEdge.POC.ODataToMongo
 	{
 		[BsonId]
 		[BsonRepresentation(BsonType.String)]
-		public string Id { get; set; }
+		public string id { get; set; }
 
 		[BsonElement("title")]
-		public string Title { get; set; } = string.Empty;
+		public string title { get; set; } = string.Empty;
 
 		[BsonElement("isCompleted")]
-		public bool IsCompleted { get; set; }
+		public bool isCompleted { get; set; }
 	}
 }

@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using BenchmarkDotNet.Running;
 using Microsoft.AspNetCore.OData;
 using Microsoft.OData.ModelBuilder;
@@ -39,6 +40,14 @@ namespace BettingEdge.POC.ODataToMongo
 				app.UseSwagger();
 				app.UseSwaggerUI();
 			}
+
+			app.Use(async (context, next) =>
+			{
+				Stopwatch sw = Stopwatch.StartNew();
+				await next(context);
+				sw.Stop();
+				Console.WriteLine($"\n\t\t\t ELAPSED TIME: {sw.ElapsedMilliseconds} ms\n");
+			});
 
 
 			app.UseODataRouteDebug();
