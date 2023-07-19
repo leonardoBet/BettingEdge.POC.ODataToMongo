@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+	<ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.13.6" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+		<PackageReference Include="Lambda.Azure.CosmosDb.OData.Sql" Version="4.1.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.3.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.3.1" />
+    <PackageReference Include="MongoDB.Analyzer" Version="1.2.0" />
+    <PackageReference Include="MongoDB.Driver" Version="2.20.0" />
+		<PackageReference Include="Microsoft.AspNetCore.OData" Version="8.2.0" />
+
+	</ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="WeatherForecast.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="C:\Users\Leonardo\.nuget\packages\microsoft.diagnostics.tracing.traceevent\3.0.2\buildTransitive\..\build\native\amd64\KernelTraceControl.dll" />
+    <None Remove="C:\Users\Leonardo\.nuget\packages\microsoft.diagnostics.tracing.traceevent\3.0.2\buildTransitive\..\build\native\amd64\msdia140.dll" />
+    <None Remove="C:\Users\Leonardo\.nuget\packages\microsoft.diagnostics.tracing.traceevent\3.0.2\buildTransitive\..\build\native\amd64\msvcp140.dll" />
+    <None Remove="C:\Users\Leonardo\.nuget\packages\microsoft.diagnostics.tracing.traceevent\3.0.2\buildTransitive\..\build\native\amd64\vcruntime140.dll" />
+    <None Remove="C:\Users\Leonardo\.nuget\packages\microsoft.diagnostics.tracing.traceevent\3.0.2\buildTransitive\..\build\native\amd64\vcruntime140_1.dll" />
+    <None Remove="C:\Users\Leonardo\.nuget\packages\microsoft.diagnostics.tracing.traceevent\3.0.2\buildTransitive\..\build\native\arm64\KernelTraceControl.dll" />
+    <None Remove="C:\Users\Leonardo\.nuget\packages\microsoft.diagnostics.tracing.traceevent\3.0.2\buildTransitive\..\build\native\arm64\msdia140.dll" />
+    <None Remove="C:\Users\Leonardo\.nuget\packages\microsoft.diagnostics.tracing.traceevent\3.0.2\buildTransitive\..\build\native\arm64\msvcp140.dll" />
+    <None Remove="C:\Users\Leonardo\.nuget\packages\microsoft.diagnostics.tracing.traceevent\3.0.2\buildTransitive\..\build\native\arm64\vcruntime140.dll" />
+    <None Remove="C:\Users\Leonardo\.nuget\packages\microsoft.diagnostics.tracing.traceevent\3.0.2\buildTransitive\..\build\native\arm64\vcruntime140_1.dll" />
+    <None Remove="C:\Users\Leonardo\.nuget\packages\microsoft.diagnostics.tracing.traceevent\3.0.2\buildTransitive\..\build\native\x86\KernelTraceControl.dll" />
+    <None Remove="C:\Users\Leonardo\.nuget\packages\microsoft.diagnostics.tracing.traceevent\3.0.2\buildTransitive\..\build\native\x86\KernelTraceControl.Win61.dll" />
+    <None Remove="C:\Users\Leonardo\.nuget\packages\microsoft.diagnostics.tracing.traceevent\3.0.2\buildTransitive\..\build\native\x86\msdia140.dll" />
+    <None Remove="C:\Users\Leonardo\.nuget\packages\microsoft.diagnostics.tracing.traceevent\3.0.2\buildTransitive\..\build\native\x86\msvcp140.dll" />
+    <None Remove="C:\Users\Leonardo\.nuget\packages\microsoft.diagnostics.tracing.traceevent\3.0.2\buildTransitive\..\build\native\x86\vcruntime140.dll" />
+    <None Remove="C:\Users\Leonardo\.nuget\packages\microsoft.diagnostics.tracing.traceevent\3.0.2\buildTransitive\..\lib\netstandard1.6\Dia2Lib.dll" />
+    <None Remove="C:\Users\Leonardo\.nuget\packages\microsoft.diagnostics.tracing.traceevent\3.0.2\buildTransitive\..\lib\netstandard1.6\OSExtensions.dll" />
+    <None Remove="C:\Users\Leonardo\.nuget\packages\microsoft.diagnostics.tracing.traceevent\3.0.2\buildTransitive\..\lib\netstandard1.6\TraceReloggerLib.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\" />
+  </ItemGroup>
+
+</Project>
