@@ -13,10 +13,12 @@ using Microsoft.Azure.Cosmos;
 using Azure.Identity;
 using Microsoft.Azure.Documents.OData.Sql;
 using MongoDB.Bson;
+using BettingEdge.POC.ODataToMongo.Models;
+using BettingEdge.POC.ODataToMongo.Services;
 
 namespace BettingEdge.POC.ODataToMongo.Controllers
 {
-	[ApiController]
+    [ApiController]
 	[Route("[controller]")]
 	public class TodosController : ControllerBase
 	{

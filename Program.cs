@@ -1,11 +1,12 @@
 using System.Diagnostics;
 using BenchmarkDotNet.Running;
+using BettingEdge.POC.ODataToMongo.Models;
 using Microsoft.AspNetCore.OData;
 using Microsoft.OData.ModelBuilder;
 
 namespace BettingEdge.POC.ODataToMongo
 {
-	public class Program
+    public class Program
 	{
 		public static void Main(string[] args)
 		{
